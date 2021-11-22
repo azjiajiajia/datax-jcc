@@ -181,7 +181,8 @@ public class MongoDBReader extends Reader {
                         record.addColumn(new LongColumn((Long) tempCol));
                     } else {
                         if(KeyConstant.isArrayType(column.getString(KeyConstant.COLUMN_TYPE))) {
-                            String splitter = column.getString(KeyConstant.COLUMN_SPLITTER);
+//                            String splitter = column.getString(KeyConstant.COLUMN_SPLITTER);
+                            String splitter = ",";
                             if(Strings.isNullOrEmpty(splitter)) {
                                 throw DataXException.asDataXException(MongoDBReaderErrorCode.ILLEGAL_VALUE,
                                     MongoDBReaderErrorCode.ILLEGAL_VALUE.getDescription());
@@ -271,7 +272,7 @@ public class MongoDBReader extends Reader {
                         record.addColumn(new LongColumn((Long) tempCol));
                     } else {
                         if(KeyConstant.isArrayType(column.getString(KeyConstant.COLUMN_TYPE))) {
-                            String splitter = column.getString(KeyConstant.COLUMN_SPLITTER);
+                            String splitter = ",";
                             if(Strings.isNullOrEmpty(splitter)) {
                                 throw DataXException.asDataXException(MongoDBReaderErrorCode.ILLEGAL_VALUE,
                                         MongoDBReaderErrorCode.ILLEGAL_VALUE.getDescription());

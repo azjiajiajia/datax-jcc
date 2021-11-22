@@ -2,9 +2,14 @@ package com.alibaba.datax.core.transport.transformer;
 
 import com.alibaba.datax.common.element.Record;
 import com.alibaba.datax.common.exception.DataXException;
+import com.alibaba.datax.common.util.Md5Util;
+import com.alibaba.datax.common.util.DomainUtil;
 import com.alibaba.datax.transformer.Transformer;
+import com.alibaba.fastjson.JSON;
 import groovy.lang.GroovyClassLoader;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.types.ObjectId;
+
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.util.Arrays;
@@ -77,6 +82,9 @@ public class GroovyTransformer extends Transformer {
         sb.append("import static com.alibaba.datax.core.transport.transformer.GroovyTransformerStaticUtil.*;");
         sb.append("import com.alibaba.datax.common.element.*;");
         sb.append("import com.alibaba.datax.common.exception.DataXException;");
+        sb.append("import com.alibaba.datax.common.util.*;");
+        sb.append("import com.alibaba.fastjson.JSON;");
+        sb.append("import org.apache.commons.lang3.StringUtils;");
         sb.append("import com.alibaba.datax.transformer.Transformer;");
         sb.append("import java.util.*;");
         sb.append("public class RULE extends Transformer").append("{");
