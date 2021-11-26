@@ -1,5 +1,6 @@
 package com.alibaba.datax.core.transport.transformer;
 
+import com.alibaba.datax.common.element.DateColumn;
 import com.alibaba.datax.common.element.Record;
 import com.alibaba.datax.common.exception.DataXException;
 import com.alibaba.datax.common.util.Md5Util;
@@ -8,11 +9,13 @@ import com.alibaba.datax.transformer.Transformer;
 import com.alibaba.fastjson.JSON;
 import groovy.lang.GroovyClassLoader;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.bson.types.ObjectId;
 
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -85,6 +88,7 @@ public class GroovyTransformer extends Transformer {
         sb.append("import com.alibaba.datax.common.util.*;");
         sb.append("import com.alibaba.fastjson.JSON;");
         sb.append("import org.apache.commons.lang3.StringUtils;");
+        sb.append("import org.apache.commons.lang3.time.DateFormatUtils;");
         sb.append("import com.alibaba.datax.transformer.Transformer;");
         sb.append("import java.util.*;");
         sb.append("public class RULE extends Transformer").append("{");
