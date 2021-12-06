@@ -100,9 +100,10 @@ public class MongoDBReader extends Reader {
         private boolean isObjectId = true;
 
         //jcc扩展:支持聚合，注意若使用了该语句，则其他查询条件会全部失效
+        //但是query中的语句将不用来查询而是用来进行explain从而进行聚合后的分页
         private String aggQuery = null;
-        private Integer page = null;
-        private Integer size = null;
+        private Integer skip = null;
+        private Integer limit = null;
 
         @Override
         public void startRead(RecordSender recordSender) {
@@ -220,8 +221,8 @@ public class MongoDBReader extends Reader {
             this.upperBound = readerSliceConfig.get(KeyConstant.UPPER_BOUND);
             this.isObjectId = readerSliceConfig.getBool(KeyConstant.IS_OBJECTID);
             this.aggQuery = readerSliceConfig.getString(KeyConstant.AGG_QUERY);
-            this.size = readerSliceConfig.getInt(KeyConstant.AGG_SIZE);
-            this.page = readerSliceConfig.getInt(KeyConstant.AGG_PAGE);
+            this.limit = readerSliceConfig.getInt(KeyConstant.AGG_LIMIT);
+            this.skip = readerSliceConfig.getInt(KeyConstant.AGG_SKIP);
         }
 
         @Override
@@ -230,6 +231,7 @@ public class MongoDBReader extends Reader {
         }
 
         private void executeAggQuery(RecordSender recordSender) {
+            //
             List<String> aggResultStr = new ArrayList<>();
             Process process;
             String path = null;
@@ -237,6 +239,9 @@ public class MongoDBReader extends Reader {
                 path = "/home/admin/app/datax/datax/job/"
                         + aggQuery + " " + mongoClient.getAddress().getHost() + " " + mongoClient.getAddress().getPort()
                         + " " + database;
+                if (limit != null && skip != null) {
+                    path += " " + skip + " " + limit;
+                }
                 process = Runtime.getRuntime().exec(path);
                 getErrorInputStream(process);
                 getProcessInputStream(process, aggResultStr);

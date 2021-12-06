@@ -90,11 +90,15 @@ public class KeyConstant {
     /**
      * mongo聚合语句的分页页数
      */
-    public static final String AGG_SIZE = "aggSize";
+    public static final String AGG_SKIP = "aggSkip";
     /**
      * mongo聚合语句的分页页码
      */
-    public static final String AGG_PAGE = "aggPage";
+    public static final String AGG_LIMIT = "aggLimit";
+    /**
+     * 用于判断mongo聚合语句的条件，得要是explain方法
+     */
+    public static final String AGG_PRE = "aggPre";
     /**
      * 判断是否为数组类型
      * @param type 数据类型
