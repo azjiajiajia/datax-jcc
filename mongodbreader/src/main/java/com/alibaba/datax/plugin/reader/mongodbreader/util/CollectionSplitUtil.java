@@ -9,7 +9,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCommandException;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +42,7 @@ public class CollectionSplitUtil {
         }
 
         //若是聚合，则按聚合的规则来切分
-        if (StringUtils.isNotBlank(originalSliceConfig.getString(KeyConstant.AGG_QUERY))) {
+        if (StringUtils.isNotBlank(originalSliceConfig.getString(KeyConstant.AGG_PRE))) {
             return doSplitAgg(adviceNumber, mongoClient, dbName, collName, originalSliceConfig);
         }
 
@@ -179,9 +178,19 @@ public class CollectionSplitUtil {
     private static List<Configuration> doSplitAgg(int adviceNumber, MongoClient mongoClient,
                                                   String dbName, String collName, Configuration originalSliceConfig) {
         List<Configuration> confList = new ArrayList<>();
-        String query = originalSliceConfig.getString(KeyConstant.MONGO_QUERY);
+        String query = originalSliceConfig.getString(KeyConstant.AGG_QUERY);
+        originalSliceConfig.set(KeyConstant.IS_OBJECTID, false);
+        originalSliceConfig.set(KeyConstant.LOWER_BOUND, "min");
+        originalSliceConfig.set(KeyConstant.UPPER_BOUND, "max");
         if (StringUtils.isBlank(query)) {
             Configuration conf = originalSliceConfig.clone();
+            confList.add(conf);
+            return confList;
+        }
+        if (adviceNumber == 1) {
+            Configuration conf = originalSliceConfig.clone();
+            conf.set(KeyConstant.AGG_SKIP, 0);
+            conf.set(KeyConstant.AGG_LIMIT, 1000000);
             confList.add(conf);
             return confList;
         }
