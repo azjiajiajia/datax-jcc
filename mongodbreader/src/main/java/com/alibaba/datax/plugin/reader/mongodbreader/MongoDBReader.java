@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.datax.common.element.BoolColumn;
@@ -243,8 +244,10 @@ public class MongoDBReader extends Reader {
                     path += " " + skip + " " + limit;
                 }
                 process = Runtime.getRuntime().exec(path);
-                getErrorInputStream(process);
-                getProcessInputStream(process, aggResultStr);
+                CountDownLatch count = new CountDownLatch(2);
+                getErrorInputStream(process, count);
+                getProcessInputStream(process, aggResultStr, count);
+                count.await();
                 process.waitFor();
                 process.destroy();
             } catch (Exception e) {
@@ -295,7 +298,7 @@ public class MongoDBReader extends Reader {
             });
         }
 
-        private void getErrorInputStream(Process process) {
+        private void getErrorInputStream(Process process, CountDownLatch count) {
             new Thread(() -> {
                 BufferedReader br = new  BufferedReader(new  InputStreamReader(process.getErrorStream()));
                 try {
@@ -308,6 +311,7 @@ public class MongoDBReader extends Reader {
                 finally{
                     try {
                         process.getErrorStream().close();
+                        count.countDown();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -315,7 +319,7 @@ public class MongoDBReader extends Reader {
             }).start();
         }
 
-        private void getProcessInputStream(Process process, List<String> aggResultStr) {
+        private void getProcessInputStream(Process process, List<String> aggResultStr, CountDownLatch count) {
             new Thread(() -> {
                 BufferedReader br = new  BufferedReader(new  InputStreamReader(process.getInputStream()));
                 try {
@@ -331,6 +335,7 @@ public class MongoDBReader extends Reader {
                 finally{
                     try {
                         process.getInputStream().close();
+                        count.countDown();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
